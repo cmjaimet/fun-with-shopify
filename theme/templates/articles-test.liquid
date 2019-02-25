@@ -1,0 +1,26 @@
+<!-- /templates/article.liquid -->
+
+
+<section>
+
+  {% comment %}
+    I stripped out (almost) everything that is not related to implementing shortcodes.
+    I left the title in, because it's convenient to see the name of the article
+    you're testing.
+  {% endcomment %}
+
+  <h1>{{ article.title }}</h1>
+
+
+
+  {% comment %}
+    Here's the only change. Themes generally insert the body of the post using {{ article.content }}.
+    As the name implies, this displays the contents of the article. If you want to use shortcode in
+    the article text, change this to {% include 'shortcode' load: article.content %}
+  {% endcomment %}
+
+  <div class="rte feature-copy">
+    {% include 'shortcode' load: article.content %}
+  </div>
+
+</section>

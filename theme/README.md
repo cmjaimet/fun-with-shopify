@@ -45,3 +45,10 @@ https://mysite.myshopify.com/admin/blogs/22899720214/articles/26946568214
 
 ## STEP 4:
 There is no step 4
+
+
+# Shortcode functionality courtesy Culture Kings
+https://github.com/culturekings/shopify-shortcodes
+/theme/snippets/shortcode-render.liquid
+/theme/snippets/shortcode.liquid
+Both files used unaltered.
