@@ -1,0 +1,168 @@
+<!-- /sections/section_blog.liquid -->
+
+{% comment %}
+  Loop through three recent blog articles with the following code.
+
+  Since we're not on the blog template, we need to define the blog
+  handle we want to focus on. For this example we'll use the default 'news',
+  but you can create a blog page-specific content if you want.
+{% endcomment %}
+
+{% assign selected_blog = blogs[section.settings.homepage_blog] %}
+
+<section class="homepage-blog">
+
+{% if selected_blog != empty %}
+
+  <div class="wrapper">
+    <h2 class="section_title">
+      {% if section.settings.title == blank %}
+        {{ selected_blog.title }}
+      {% else %}
+        {{ section.settings.title }}
+      {% endif %}
+      <div class="border"></div>
+    </h2>
+  </div>
+  {% unless selected_blog.articles_count == 0 %}
+  <div class="wrapper">
+    <div class="grid section-content">
+      {% for article in selected_blog.articles limit:section.settings.num_posts %}
+
+        <div class="grid__item large--one-third">
+
+          {% if article.image %}
+            <a href="{{ article.url }}">
+              <div class="article-image lazyload"
+                data-bgset="{% include 'bgset', image: article.image.src %}"
+                data-sizes="auto"
+                data-parent-fit="cover"
+                style="background-image: url('{{ article.image.src | img_url: '50x50' }});">
+              </div>
+            </a>
+          {% endif %}
+
+
+          <h3 class="standard-index"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+<!--           <time class="subheader" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time> -->
+
+          {% comment %}
+            Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+            Since this is just a listing page, you can either use the excerpt or truncate the full article.
+          {% endcomment %}
+          <div class="rte">
+            {% if article.excerpt.size > 0 %}
+              {{ article.excerpt }}
+            {% else %}
+              <p>{{ article.content | strip_html | truncatewords: 40 }}</p>
+            {% endif %}
+          </div>
+
+          {% comment %}
+            Show off meta information like number of comments and tags.
+          {% endcomment %}
+          <ul>
+            {% if blog.comments_enabled? %}
+            <li>
+              <a href="{{ article.url }}#comments">
+                {{ article.comments_count }}
+                {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+
+          <p class="read-more"><a href="{{ article.url }}" >{{ 'blogs.article.read_more' | t }} </a></p>
+
+        </div>
+
+      {% endfor %}
+    </div>
+  </div>
+  {% endunless %}
+
+{% else %}
+
+<div class="wrapper">
+  <h2 class="section_title">
+    {% if section.settings.title == blank %}
+      {{ 'homepage.onboarding.blog_section-title' | t }}
+    {% else %}
+      {{ section.settings.title }}
+    {% endif %}
+    <div class="border"></div>
+  </h2>
+</div>
+
+<div class="wrapper">
+  <div class="grid section-content">
+    {% for i in (1..section.settings.num_posts) %}
+
+      <div class="grid__item large--one-third">
+
+
+        <h3 class="standard-index"><a href="">{{ 'homepage.onboarding.blog_title' | t }}</a></h3>
+        <time class="subheader" datetime="{{ 'now' | date: format: 'month_day_year' }}">{{ 'now' | date: format: 'month_day_year' }}</time>
+
+        {% comment %}
+          Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+          Since this is just a listing page, you can either use the excerpt or truncate the full article.
+        {% endcomment %}
+        <div class="rte">
+          {{ 'homepage.onboarding.blog_excerpt' | t }}
+        </div>
+        <p class="read-more"><a href="" >{{ 'blogs.article.read_more' | t }} </a></p>
+      </div>
+
+    {% endfor %}
+
+  </div>
+</div>
+
+{% endif %}
+
+</section>
+
+{% schema %}
+{
+  "name":  "Blog posts (N)",
+  "class": "section-blog",
+  "settings": [
+    {
+      "type":    "paragraph",
+      "content": "Show last n blog posts on home page"
+    },
+    {
+      "id":    "title",
+      "type":  "text",
+      "label": "Heading",
+      "info":  "If left blank, name of blog will be used."
+    },
+    {
+      "id":    "num_posts",
+      "type":  "select",
+      "label": "Number of posts",
+      "info":  "Min 1, max 5",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" },
+        { "value": "5", "label": "5" }
+      ],
+      "default": "1"
+    },
+    {
+       "type":  "blog",
+       "id":    "homepage_blog",
+       "label": "Blog for home page"
+    }
+  ],
+  "presets": [
+    {
+      "name":     "Blog posts (1-5)",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}

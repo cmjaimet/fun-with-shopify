@@ -1,0 +1,128 @@
+{% comment %}
+Script to see if first section to hide header border
+{% endcomment %}
+
+{% if section.settings.feature_image %}
+  {% assign feature_image = section.settings.feature_image %}
+{% endif %}
+{% assign cta_text = section.settings.feature_image_cta_text | escape %}
+{% assign cta_url = section.settings.feature_image_cta_url %}
+{% assign feature_copy =  section.settings.feature_image_copy | escape %}
+{% assign feature_text =  section.settings.feature_image_text  %}
+{% assign width =  section.settings.feature_image_width_select %}
+{% capture section_class %}section-{{ section.id }}{% endcapture %}
+
+{% assign style = section.settings.image_style %}
+
+<section class="single-product section-product feature-image id="{{ sectionID }}" data-section-id="{{ section.id }}" data-money-format="{{ shop.money_format }}" data-section-type="product">
+
+  <div class="wrapper">
+    <div class="section-content">
+      <div class="grid--table product-single">
+
+        <div class="grid__item large--one-half medium--one-whole single-product-content text-left" style="padding: 0 25px 0 0;">
+          {% if feature_copy != '' %}
+            <div class="feature_copy-holder  {% if cta_url != '' %}with-cta{% endif %}">
+            <h3 class="feature-image-overlay {% unless section.settings.feature_image_border %}no-border{% endunless %}">{{ feature_copy }}</h3>
+            {% if feature_text != '' %}
+              <div class="feature-image-text feature-copy">
+                {{ feature_text }}
+              </div>
+            {% endif %}
+            </div>
+          {% endif %}
+          {% if cta_url != blank %}
+            <a href="{{ cta_url }}" class="feature-image-cta btn">{{ cta_text }}  <span class="next-arrow">{% include 'icon-forward' %}</span></a>
+          {% endif %}
+        </div>
+
+        {% assign current_variant = product.selected_or_first_available_variant %}
+        {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+
+        <div class="grid__item large--one-half medium--one-whole text-right image-{{ current_variant.featured_image.position }} single-product-image" style="padding: 0 0 0 25px;">
+          <div class="product-single__photos" id="ProductPhoto">
+            {% capture img_id %}FeatureImage-{{ feature_image.id }}{% endcapture %}
+            {% capture wrapper_id %}FeatureImageWrapper-{{ feature_image.id }}{% endcapture %}
+            {%- assign img_url = feature_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+            <div id="{{ wrapper_id }}">
+              <div style="padding-top:{{ 1 | divided_by: featured_image.aspect_ratio | times: 100}}%;">
+                <img id="{{ img_id }}"
+                  class="resp-img feature-image__img-content lazyload"
+                  src="{{ feature_image | img_url: '300x' }}"
+                  data-src="{{ img_url }}"
+                  data-widths="[540, 720, 900, 1080, 1296, 1512, 1728, 1944, 2048, 4472]"
+                  data-aspectratio="{{ feature_image.aspect_ratio }}"
+                  data-sizes="auto"
+                  alt="{{ feature_image.alt | escape }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image with text beside it",
+  "settings": [
+    {
+      "type": "select",
+      "id": "image_style",
+      "label": "Image style:",
+      "options": [
+        {
+          "value": "full_screen",
+          "label": "Full Screen"
+        },
+        {
+          "value": "fit_content",
+          "label": "Content"
+        }
+      ],
+      "info": "Use \'Content\' style if you want to avoid image cropping."
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "feature_image_copy",
+      "label": "Heading",
+      "default": "Image with text beside it"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_image_border",
+      "label": "Show border",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "feature_image_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "feature_image_cta_url",
+      "label": "Optional: Call to action URL"
+    },
+    {
+      "type": "text",
+      "id": "feature_image_cta_text",
+      "label": "Call to action button text",
+      "default": "Shop Now"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text beside it",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

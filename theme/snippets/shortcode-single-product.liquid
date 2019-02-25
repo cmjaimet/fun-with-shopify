@@ -1,0 +1,34 @@
+{% capture productHandle %}{% include 'shortcode-render' render:'handle' default:'' %}{% endcapture %}
+{% assign productData = all_products[ productHandle ] %}
+
+{% if productData.available %}
+
+  {% capture productTitle %}{% include 'shortcode-render' render:'title' default:productData.title %}{% endcapture %}
+  {% capture productDescription %}{% include 'shortcode-render' render:'description' default:productData.description %}{% endcapture %}
+  {% capture viewType %}{% include 'shortcode-render' render:'view' default:'' %}{% endcapture %}
+  {% capture imageSize %}{% include 'shortcode-render' render:'image_size' default:'200x200' %}{% endcapture %}
+  {% capture linkText %}{% include 'shortcode-render' render:'link_text' default:'See the pattern...' %}{% endcapture %}
+
+
+  <style type="text/css">
+  </style>
+  {% if 'image-only' == viewType %}
+      <div class="sc_product_wrapper">
+        <a href="{{ productData.url }}"><img src="{{ productData | img_url: imageSize }}" /></a>
+      </div>
+
+  {% else %}
+      <div class="sc_product_wrapper">
+        <div class="sc_product_image">
+          <a href="{{ productData.url }}"><img src="{{ productData | img_url: imageSize }}" /></a>
+        </div>
+        <div class="sc_product_text">
+          <h3><a href="{{ productData.url }}">{{ productTitle }}</a></h3>
+          <p>{{ productDescription | truncatewords: 25 }}</p>
+          <p><a class="sc_product_link" href="{{ productData.url }}">{{ linkText }}</a></p>
+        </div>
+      </div>
+
+  {% endif %}
+
+{% endif %}
